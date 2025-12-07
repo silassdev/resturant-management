@@ -1,4 +1,6 @@
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+
+const { verify } = jwt;
 
 const authMiddleware = (roles = []) => {
   if (typeof roles === 'string') roles = [roles];
@@ -11,9 +13,11 @@ const authMiddleware = (roles = []) => {
     try {
       const payload = verify(token, process.env.JWT_SECRET);
       req.user = payload;
+
       if (roles.length && !roles.includes(payload.role)) {
         return res.status(403).json({ message: 'Forbidden' });
       }
+
       next();
     } catch (err) {
       return res.status(401).json({ message: 'Invalid token' });

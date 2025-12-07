@@ -1,4 +1,4 @@
-import { find, create, findByIdAndUpdate } from '../models/InventoryItem';
+import { find, create, findByIdAndUpdate } from '../models/InventoryItem.js';
 
 async function listInventory(req, res, next) {
   try {

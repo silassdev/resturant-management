@@ -1,7 +1,8 @@
 import { Router } from 'express';
+import { placeOrder, getOrder, updateOrderStatus } from '../controllers/orderController.js';
+import auth from '../middlewares/auth.js';
+
 const router = Router();
-import { placeOrder, getOrder, updateOrderStatus } from '../controllers/orderController';
-import auth from '../middlewares/auth';
 
 router.post('/', placeOrder);
 router.get('/:id', auth(), getOrder);

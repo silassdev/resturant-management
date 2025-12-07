@@ -1,4 +1,4 @@
-import { dailySales, lowStockAlerts, topSellingItems } from '../services/reportingService';
+import { dailySales, lowStockAlerts, topSellingItems } from '../services/reportingService.js';
 
 async function getDailySales(req, res, next) {
   try {

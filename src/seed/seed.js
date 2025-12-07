@@ -1,11 +1,10 @@
 require('dotenv').config();
-import mongoose from 'mongoose';
 import { hash as _hash } from 'bcryptjs';
-import connectDB from '../config/db';
-import { deleteMany, create } from '../models/MenuItem';
-import { deleteMany as _deleteMany, create as _create } from '../models/InventoryItem';
-import { deleteMany as __deleteMany, create as __create } from '../models/Table';
-import { deleteMany as ___deleteMany, create as ___create } from '../models/User';
+import connectDB from '../config/db.js';
+import { deleteMany, create } from '../models/MenuItem.js';
+import { deleteMany as _deleteMany, create as _create } from '../models/InventoryItem.js';
+import { deleteMany as __deleteMany, create as __create } from '../models/Table.js';
+import { deleteMany as ___deleteMany, create as ___create } from '../models/User.js';
 
 async function seed() {
   await connectDB();

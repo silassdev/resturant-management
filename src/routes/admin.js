@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import { login } from '../controllers/authController';
-import { getDailySales, getStockAlerts, getTopSelling } from '../controllers/reportController';
-import auth from '../middlewares/auth';
+import { login } from '../controllers/authController.js';
+import { getDailySales, getStockAlerts, getTopSelling } from '../controllers/reportController.js';
+import auth from '../middlewares/auth.js';
 
 router.post('/login', login);
 

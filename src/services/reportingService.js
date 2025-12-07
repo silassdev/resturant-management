@@ -1,9 +1,8 @@
-const Order = require('../models/Order');
-const InventoryItem = require('../models/InventoryItem');
-const mongoose = require('mongoose');
+import Order from '../models/Order.js';
+import InventoryItem from '../models/InventoryItem.js';
+import mongoose from 'mongoose';
 
-
-async function dailySales(date) {
+export async function dailySales(date) {
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
@@ -18,13 +17,11 @@ async function dailySales(date) {
   return res[0] || { totalSales: 0, orders: 0 };
 }
 
-
-async function lowStockAlerts() {
+export async function lowStockAlerts() {
   return InventoryItem.find({ $expr: { $lte: ['$quantity', '$lowStockThreshold'] } });
 }
 
-
-async function topSellingItems(limit = 10) {
+export async function topSellingItems(limit = 10) {
   const pipeline = [
     { $unwind: '$items' },
     { $group: { _id: '$items.menuItem', qty: { $sum: '$items.quantity' } } },
@@ -43,5 +40,3 @@ async function topSellingItems(limit = 10) {
   ];
   return Order.aggregate(pipeline);
 }
-
-module.exports = { dailySales, lowStockAlerts, topSellingItems };

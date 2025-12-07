@@ -1,4 +1,4 @@
-import { find, create, findByIdAndUpdate } from '../models/Table';
+import { find, create, findByIdAndUpdate } from '../models/Table.js';
 
 async function listTables(req, res, next) {
   try {

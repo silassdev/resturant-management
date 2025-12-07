@@ -1,17 +1,17 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const menuRoutes = require('./routes/menu');
-const orderRoutes = require('./routes/orders');
-const tableRoutes = require('./routes/tables');
-const reservationRoutes = require('./routes/reservations');
-const inventoryRoutes = require('./routes/inventory');
-const adminRoutes = require('./routes/admin');
-const errorHandler = require('./middlewares/errorHandler');
+import express, { json } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import menuRoutes from './routes/menu.js';
+import orderRoutes from './routes/order.js';
+import tableRoutes from './routes/tables.js';
+import reservationRoutes from './routes/reservations.js';
+import inventoryRoutes from './routes/inventory.js';
+import adminRoutes from './routes/admin.js';
+import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
 
-app.use(express.json());
+app.use(json());
 app.use(cors());
 app.use(morgan('dev'));
 
@@ -26,4 +26,4 @@ app.get('/api/health', (req, res) => res.json({ ok: true, env: process.env.NODE_
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

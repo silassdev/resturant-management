@@ -1,5 +1,5 @@
-import Reservation, { find } from '../models/Reservation';
-import { findByIdAndUpdate } from '../models/Table';
+import Reservation, { find } from '../models/Reservation.js';
+import { findByIdAndUpdate } from '../models/Table.js';
 
 async function createReservation(req, res, next) {
   try {
