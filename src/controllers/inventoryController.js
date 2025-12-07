@@ -1,25 +1,30 @@
-import { find, create, findByIdAndUpdate } from '../models/InventoryItem.js';
+import InventoryItem from '../models/InventoryItem.js';
 
-async function listInventory(req, res, next) {
+export async function listInventory(req, res, next) {
   try {
-    const items = await find();
+    const items = await InventoryItem.find();
     res.json(items);
   } catch (err) { next(err); }
 }
 
-async function createInventoryItem(req, res, next) {
+export async function updateInventory(req, res, next) {
   try {
-    const item = await create(req.body);
+    const { id } = req.params;
+    const updated = await InventoryItem.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) { next(err); }
+}
+
+export async function createInventoryItem(req, res, next) {
+  try {
+    const item = await InventoryItem.create(req.body);
     res.status(201).json(item);
   } catch (err) { next(err); }
 }
 
-async function updateInventoryItem(req, res, next) {
+export async function lowStockAlerts(req, res, next) {
   try {
-    const item = await findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
+    const low = await InventoryItem.find({ $expr: { $lte: ["$quantity", "$lowStockThreshold"] } });
+    res.json(low);
   } catch (err) { next(err); }
 }
-
-export default { listInventory, createInventoryItem, updateInventoryItem };

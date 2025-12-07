@@ -1,10 +1,11 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const TableSchema = new Schema({
-  number: { type: String, required: true, unique: true },
-  seats: { type: Number, default: 4 },
-  status: { type: String, enum: ['available', 'reserved', 'occupied'], default: 'available' },
-  currentOrder: { type: Schema.Types.ObjectId, ref: 'Order' }
-});
+  number: { type: Number, required: true, unique: true },
+  seats: { type: Number, required: true },
+  location: String,
+  status: { type: String, enum: ['available','occupied','reserved','maintenance'], default: 'available' }
+}, { timestamps: true });
 
-export default model('Table', TableSchema);
+export default mongoose.models.Table || mongoose.model('Table', TableSchema);

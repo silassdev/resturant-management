@@ -1,20 +1,26 @@
-import { findOne } from '../models/User.js';
-import { compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+const { compare } = bcrypt;
+import jwt from 'jsonwebtoken';
+const { sign } = jwt;
 
-async function login(req, res, next) {
+export async function login(req, res, next) {
   try {
     const { email, password } = req.body;
-    const user = await findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
     const match = await compare(password, user.passwordHash);
     if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
-    const token = sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET, { expiresIn: '8h' });
+    const token = sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
     res.json({ token });
   } catch (err) {
     next(err);
   }
 }
-
-export default { login };

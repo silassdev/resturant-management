@@ -1,14 +1,14 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const ReservationSchema = new Schema({
-  name: { type: String, required: true },
-  contact: String,
-  partySize: { type: Number, default: 2 },
+  customerName: { type: String, required: true },
+  phone: String,
+  partySize: { type: Number, required: true },
   table: { type: Schema.Types.ObjectId, ref: 'Table' },
-  startTime: { type: Date, required: true },
-  endTime: Date,
-  status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
-  createdAt: { type: Date, default: Date.now }
-});
+  reservedAt: { type: Date, required: true },
+  notes: String,
+  status: { type: String, enum: ['active','completed','cancelled'], default: 'active' }
+}, { timestamps: true });
 
-export default model('Reservation', ReservationSchema);
+export default mongoose.models.Reservation || mongoose.model('Reservation', ReservationSchema);

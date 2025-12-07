@@ -1,25 +1,34 @@
-import { find, create, findByIdAndUpdate } from '../models/Table.js';
+import Table from '../models/Table.js';
+import Reservation from '../models/Reservation.js';
 
-async function listTables(req, res, next) {
+export async function listTables(req, res, next) {
   try {
-    const tables = await find();
+    const tables = await Table.find();
     res.json(tables);
-  } catch (err) { next(err); }
+  } catch(err) { next(err); }
 }
 
-async function createTable(req, res, next) {
+export async function createTable(req, res, next) {
   try {
-    const table = await create(req.body);
-    res.status(201).json(table);
+    const t = await Table.create(req.body);
+    res.status(201).json(t);
   } catch (err) { next(err); }
 }
 
-async function updateTable(req, res, next) {
+export async function checkAvailability(req, res, next) {
   try {
-    const table = await findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!table) return res.status(404).json({ message: 'Not found' });
-    res.json(table);
-  } catch (err) { next(err); }
-}
+    const { seats, datetime } = req.query;
+    const dt = datetime ? new Date(datetime) : new Date();
+    const reserved = await Reservation.find({
+      reservedAt: { $lte: dt },
+      status: 'active'
+    }).distinct('table');
 
-export default { listTables, createTable, updateTable };
+    const tables = await Table.find({
+      seats: { $gte: seats ? Number(seats) : 1 },
+      _id: { $nin: reserved },
+      status: 'available'
+    });
+    res.json(tables);
+  } catch(err) { next(err); }
+}

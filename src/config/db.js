@@ -1,13 +1,11 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const connectDB = async () => {
-  const uri = process.env.MONGO_URI;
-  if (!uri) throw new Error('MONGO_URI not set');
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  console.log('MongoDB connected');
-};
-
-module.exports = connectDB;
+export async function connectDB(uri) {
+  try {
+    await mongoose.connect(uri, { dbName: 'smart_restaurant' });
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
+}

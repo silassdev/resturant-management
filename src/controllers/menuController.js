@@ -9,24 +9,14 @@ export async function listMenu(req, res, next) {
 
 export async function createMenuItem(req, res, next) {
   try {
-    const { name, description, price, inventoryItem } = req.body;
-    const item = await MenuItem.create({ name, description, price, inventoryItem });
+    const item = await MenuItem.create(req.body);
     res.status(201).json(item);
   } catch (err) { next(err); }
 }
 
 export async function updateMenuItem(req, res, next) {
   try {
-    const item = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!item) return res.status(404).json({ message: 'Menu item not found' });
-    res.json(item);
-  } catch (err) { next(err); }
-}
-
-export async function getMenuItem(req, res, next) {
-  try {
-    const item = await MenuItem.findById(req.params.id);
-    if (!item) return res.status(404).json({ message: 'Menu item not found' });
-    res.json(item);
-  } catch (err) { next(err); }
+    const updated = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch(err) { next(err); }
 }

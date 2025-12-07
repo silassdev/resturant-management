@@ -1,12 +1,14 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const MenuItemSchema = new Schema({
   name: { type: String, required: true },
   description: String,
-  price: { type: Number, required: true, min: 0 },
+  price: { type: Number, required: true },
+  ingredients: [{ type: String }], 
+  prepTimeMinutes: { type: Number, default: 10 },
+  category: String,
   active: { type: Boolean, default: true },
-  inventoryItem: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
-  createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
-export default model('MenuItem', MenuItemSchema);
+export default mongoose.models.MenuItem || mongoose.model('MenuItem', MenuItemSchema);

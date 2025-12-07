@@ -1,11 +1,11 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const InventoryItemSchema = new Schema({
   name: { type: String, required: true, unique: true },
-  unit: { type: String, default: 'unit' },
-  quantity: { type: Number, required: true, min: 0 },
+  quantity: { type: Number, required: true, default: 0 },
+  unit: { type: String, default: 'pcs' },
   lowStockThreshold: { type: Number, default: 5 },
-  createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
-export default model('InventoryItem', InventoryItemSchema);
+export default mongoose.models.InventoryItem || mongoose.model('InventoryItem', InventoryItemSchema);
