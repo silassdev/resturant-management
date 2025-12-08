@@ -1,10 +1,10 @@
+process.env.SKIP_DB_TESTS = 'true';
+
 import request from 'supertest';
 import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest';
 import app from '../src/app.js';
 import { startTestDB, stopTestDB } from './setup.js';
 
-
-process.env.SKIP_DB_TESTS = 'true';
 
 
 vi.mock('../src/models/MenuItem.js', () => {
@@ -32,6 +32,13 @@ import Table from '../src/models/Table.js';
 
 let server;
 
+const sharedInventory = {
+  _id: 'inv1',
+  name: 'Dough',
+  quantity: 10,
+  async save() {return this; }
+};
+
 beforeAll(async () => {
   await startTestDB();
 
@@ -43,19 +50,11 @@ beforeAll(async () => {
   });
 
   InventoryItem.findOne.mockImplementation(async ({ name }) => {
-    const inv = {
-      _id: 'inv1',
-      name,
-      quantity: 10,
-      async save() { return this; }
-    };
-    return inv;
+    if (name === 'Dough') return sharedInventory;
+    return { _id: 'inv-x', name, quantity: 100, async save() { return this; } };
   });
 
-
-  Order.create.mockImplementation(async (payload) => {
-    return { _id: 'o1', ...payload };
-  });
+  Order.create.mockImplementation(async (payload) => ({ _id: 'o1', ...payload }));
 
   Table.findById.mockImplementation(async (id) => {
     if (id === 'table1') return { _id: 'table1', number: 1, seats: 4, status: 'available', async save() {} };
@@ -81,17 +80,14 @@ describe('Order flow (DB skipped, model methods mocked)', () => {
       .post('/api/orders')
       .send(payload);
 
-
-      expect(res.status).toBe(201);
+    expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('_id');
     expect(res.body).toHaveProperty('total');
 
-
     expect(MenuItem.findById).toHaveBeenCalledWith('menu1');
     expect(InventoryItem.findOne).toHaveBeenCalled();
-    expect(Order.create).toHaveBeenCalled();
 
-    const invObj = await InventoryItem.findOne({ name: 'Dough' });
-    expect(invObj.quantity).toBe(8);
+    expect(sharedInventory.quantity).toBe(8);
+    expect(Order.create).toHaveBeenCalled();
   });
 });
