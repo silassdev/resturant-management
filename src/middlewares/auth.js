@@ -4,23 +4,47 @@ dotenv.config();
 
 const { JWT_SECRET, ADMIN_TOKEN } = process.env;
 
-export function adminOnly(req, res, next) {
-  const token = req.headers['x-admin-token'];
-  if (token && token === ADMIN_TOKEN) {
-    req.user = { role: 'admin', name: 'admin-demo' };
-    return next();
-  }
-  const auth = req.headers.authorization;
-  if (!auth) return res.status(401).json({ message: 'Unauthorized' });
-  const parts = auth.split(' ');
-  if (parts.length !== 2) return res.status(401).json({ message: 'Invalid auth header' });
-  const jwtToken = parts[1];
-  try {
-    const payload = jwt.verify(jwtToken, JWT_SECRET);
-    if (!payload || !payload.isAdmin) return res.status(403).json({ message: 'Forbidden' });
-    req.user = payload;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
+
+export function auth(requiredRole) {
+  return (req, res, next) => {
+    try {
+      const adminToken = req.headers['x-admin-token'];
+      if (adminToken && ADMIN_TOKEN && adminToken === ADMIN_TOKEN) {
+        req.user = { role: 'admin', method: 'admin-token' };
+        if (!requiredRole || requiredRole === 'admin') return next();
+      }
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        if (req.user) return next();
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const parts = authHeader.split(' ');
+      if (parts.length !== 2 || parts[0] !== 'Bearer') {
+        return res.status(401).json({ message: 'Invalid auth header' });
+      }
+
+      const token = parts[1];
+      let payload;
+      try {
+        payload = jwt.verify(token, JWT_SECRET);
+      } catch (err) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+
+      req.user = payload;
+
+      if (requiredRole === 'admin' && !payload?.isAdmin) {
+        return res.status(403).json({ message: 'Forbidden: admin role required' });
+      }
+
+      return next();
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
+
+
+export const adminOnly = auth('admin');

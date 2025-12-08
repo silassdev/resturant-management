@@ -1,28 +1,27 @@
-import express, { json } from 'express';
+import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import menuRoutes from './routes/menu.js';
-import orderRoutes from './routes/order.js';
-import tableRoutes from './routes/tables.js';
-import reservationRoutes from './routes/reservations.js';
-import inventoryRoutes from './routes/inventory.js';
-import adminRoutes from './routes/admin.js';
-import errorHandler from './middlewares/errorHandler.js';
+
+import menuRoute from './routes/menuRoute.js';
+import inventoryRoute from './routes/inventoryRoute.js';
+import orderRoute from './routes/orderRoute.js';
+import reservationRoute from './routes/reservationRoute.js';
+import tableRoute from './routes/tableRoute.js';
+import adminRoute from './routes/admin.js';
+
+import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
-
-app.use(json());
 app.use(cors());
+app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/api/menu', menuRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/tables', tableRoutes);
-app.use('/api/reservations', reservationRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/admin', adminRoutes);
-
-app.get('/api/health', (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
+app.use('/api/menu', menuRoute);
+app.use('/api/inventory', inventoryRoute);
+app.use('/api/orders', orderRoute);
+app.use('/api/reservations', reservationRoute);
+app.use('/api/tables', tableRoute);
+app.use('/api/admin', adminRoute);
 
 app.use(errorHandler);
 

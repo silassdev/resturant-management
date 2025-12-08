@@ -6,4 +6,5 @@ const router = express.Router();
 router.post('/', placeOrder);
 router.get('/', listOrders);
 router.patch('/:id/status', adminOnly, updateOrderStatus);
+
 export default router;
