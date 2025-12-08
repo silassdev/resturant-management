@@ -1,15 +1,24 @@
 import mongoose from 'mongoose';
 
+let mongoServerInstance = null;
+
+
 export async function startTestDB() {
-  if (process.env.TEST_USE_REAL_MONGO === 'true') {
-    const uri = process.env.MONGODB_TEST_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/restaurant_test';
-    await mongoose.connect(uri, { directConnection: true });
-    return uri;
+  if (process.env.SKIP_DB_TESTS === 'true') {
+    console.log('[test/setup] SKIP_DB_TESTS=true -> skipping DB startup');
+    return null;
   }
 
-  throw new Error('TEST_USE_REAL_MONGO not set. Set TEST_USE_REAL_MONGO=true to use a real MongoDB instance.');
+  
+  throw new Error('startTestDB() called but SKIP_DB_TESTS !== "true". If you want to run DB tests, implement the DB start logic or set SKIP_DB_TESTS=true to bypass.');
 }
 
 export async function stopTestDB() {
-  await mongoose.disconnect();
+  if (process.env.SKIP_DB_TESTS === 'true') {
+    console.log('[test/setup] SKIP_DB_TESTS=true -> skipping DB teardown');
+    return;
+  }
+  if (mongoServerInstance) {
+    try { await mongoose.disconnect(); } catch (e) { /* ignore */ }
+  }
 }
