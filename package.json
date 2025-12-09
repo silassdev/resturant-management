@@ -1,7 +1,7 @@
 {
   "name": "restaurant-management",
   "version": "1.0.0",
-  "description": "Smart Restaurant Management System using Node.js, Express, MongoDB (ES Modules)",
+  "description": "Restaurant Management System using Node.js, Express, MongoDB (ES Modules)",
   "type": "module",
   "main": "src/server.js",
   "scripts": {
