@@ -1,19 +1,17 @@
-import jwt from 'jsonwebtoken';
-const JWT_SECRET = process.env.JWT_SECRET || 'keyboardcat';
+export async function login(req, res, next) {
+  try {
+    console.log('[adminController.login] start');
+    const { username, password } = req.body || {};
+    console.log('[adminController.login] username=', username, 'passwordPresent=', !!password);
 
-export function login(req, res) {
-  const { username, password } = req.body;
-  if (username === 'admin' && password === 'adminpass') {
-    const token = jwt.sign({ username: 'admin', isAdmin: true }, JWT_SECRET, { expiresIn: '2h' });
-    return res.json({ token });
-  }
-  const fallback = process.env.ADMIN_TOKEN;
-  if (fallback) {
-    return res.json({ token: fallback });
-  }
-  return res.status(401).json({ message: 'Invalid credentials' });
-}
+    const DEV_FALLBACK_TOKEN = process.env.ADMIN_TOKEN || 'admintoken_for_quick_demo';
+    if (username === 'admin' && password === 'adminpass') {
+      return res.status(200).json({ token: DEV_FALLBACK_TOKEN });
+    }
 
-export async function getDailySales(req, res) {
-  res.json({ totalSales: 0, orderCount: 0 });
+    return res.status(401).json({ message: 'Invalid credentials' });
+  } catch (err) {
+    console.error('[adminController.login] error', err && err.stack ? err.stack : err);
+    return next(err);
+  }
 }
