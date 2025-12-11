@@ -5,7 +5,7 @@ const MenuItemSchema = new Schema({
   name: { type: String, required: true },
   description: String,
   price: { type: Number, required: true },
-  ingredients: [{ type: String }], 
+  ingredients: [{name: String, qty: { type: Number, default: 1 }}], 
   prepTimeMinutes: { type: Number, default: 10 },
   category: String,
   active: { type: Boolean, default: true },
